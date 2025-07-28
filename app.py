@@ -40,7 +40,17 @@ st.write("")  # Adds a small vertical space
 
 
 # === Step 1: Select University ===
-selected_uni = st.selectbox("Select your University", universities)
+universities = [
+    "NED University", "FAST-NUCES", "COMSATS", "IBA",
+    "GIKI", "LUMS", "NUST", "Habib University","Ziauddin University"
+]
+
+# Sort alphabetically
+universities = sorted(universities)
+
+# Dropdown
+selected_uni = st.selectbox("Select your university", universities)
+
 
 if selected_uni:
     # Load grading policy
