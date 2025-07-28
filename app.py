@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import os
 from PIL import Image
+from decimal import Decimal, ROUND_HALF_UP
 
 logo_path = "FAST_logo.png"  # or .jpg/.jpeg depending on your file
 logo = Image.open(logo_path)
@@ -108,14 +109,26 @@ if selected_uni:
         return 0.0
 
     # === SGPA Calculation ===
+
     def calculate_sgpa(marks_list, grade_list, credit_list, df):
-        total_points = 0
-        total_credits = 0
+        total_points = Decimal('0')
+        total_credits = Decimal('0')
+
         for m, g, c in zip(marks_list, grade_list, credit_list):
-            gpa = grade_to_gpa(g, df) if g else marks_to_gpa(m, df)
-            total_points += gpa * c
-            total_credits += c
-        return round(total_points / total_credits, 2) if total_credits > 0 else 0.0
+            credit = Decimal(str(c))
+            if g:
+                gpa = Decimal(str(grade_to_gpa(g, df)))
+            else:
+                gpa = Decimal(str(marks_to_gpa(m, df)))
+
+            total_points += gpa * credit
+            total_credits += credit
+
+        if total_credits == 0:
+            return 0.0
+
+        sgpa = total_points / total_credits
+        return float(sgpa.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP))
 
     # === Calculate Button ===
     if st.button("Calculate SGPA"):
